@@ -1,0 +1,22 @@
+<div class="wrapper">
+
+    <mat-card class="card" *ngFor="let operation of operations">
+        
+        <div *ngIf="operation.action === 'add'">
+            <div class="title">Sum</div>
+
+            <div class="operation">
+                {{ operation.x }} + {{ operation.y }} =  {{ operation.result }}
+            </div>
+        </div>
+        
+        <div *ngIf="operation.action === 'multiply'">
+            <div class="title">Multiply</div>
+
+            <div class="operation">
+                {{ operation.x }} × {{ operation.y }} = {{ operation.result }}
+            </div>
+        </div>
+
+    </mat-card>
+</div>
