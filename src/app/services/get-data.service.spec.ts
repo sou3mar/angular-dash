@@ -13,10 +13,10 @@ describe('GetDataService', () => {
     const httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
 
     TestBed.configureTestingModule({
-      providers : [
+      providers: [
         GetDataService,
         {
-          provide : HttpClient,
+          provide: HttpClient,
           useValue: httpClientSpy
         }
       ]
@@ -28,14 +28,19 @@ describe('GetDataService', () => {
 
   it('fetchOperations should return an Observable',
   (done: DoneFn) => {
-    http.get.withArgs('../../../assets/multiply.json').and.returnValue(of('multiplyValue'));
-    http.get.withArgs('../../../assets/add.json').and.returnValue(of('addValue'));
-    http.get.withArgs('../../../assets/adds.json').and.throwError('Missage Data!');
     http.get.withArgs('../../../assets/numbers.json').and.returnValue(of('numberValue'));
+    http.get.withArgs('../../../assets/add.json').and.returnValue(of('addValue'));
+    http.get.withArgs('../../../assets/multiply.json').and.returnValue(of('multiplyValue'));
+    
     service.fetchOperations().subscribe(
-      value => {
-        const finalValue = {number: 'numberValue', addOperand: 'addValue', multiplyOperand: 'multiplyValue'};
-        expect(value).toEqual(finalValue);
+      output => {
+        const expected = {
+          number: 'numberValue',
+          addOperand: 'addValue',
+          multiplyOperand: 'multiplyValue'
+        };
+
+        expect(output).toEqual(expected);
         done();
       }
     )
@@ -46,8 +51,8 @@ describe('GetDataService', () => {
     http.get.withArgs('../../../assets/numbers.json').and.returnValue(throwError('Server Error'));
 
     service.fetchOperations().subscribe(() => {},
-      errValue => {
-        expect(errValue).toEqual('Server Error');
+      err => {
+        expect(err).toEqual('Server Error');
         done();
       }
     )
@@ -55,13 +60,19 @@ describe('GetDataService', () => {
   
   it('should return "Missing Data!" in addOperand on add.json loading failure',
   (done: DoneFn) => {
-    http.get.withArgs('../../../assets/add.json').and.returnValue(throwError('Missing Data!'));
     http.get.withArgs('../../../assets/numbers.json').and.returnValue(of('numberValue'));
+    http.get.withArgs('../../../assets/add.json').and.returnValue(throwError('Missing Data!'));
     http.get.withArgs('../../../assets/multiply.json').and.returnValue(of('multiplyValue'));
+
     service.fetchOperations().subscribe(
-      value => {
-        const finalValue = {number: 'numberValue', addOperand: {value: 'Missing Data!'}, multiplyOperand: 'multiplyValue'};
-        expect(value).toEqual(finalValue);
+      output => {
+        const expected = {
+          number: 'numberValue',
+          addOperand: {value: 'Missing Data!'},
+          multiplyOperand: 'multiplyValue'
+        };
+
+        expect(output).toEqual(expected);
         done();
       }
     )
@@ -69,13 +80,21 @@ describe('GetDataService', () => {
 
   it('should return "Missing Data!" in multiplyOperand on multiply.json loading failure',
   (done: DoneFn) => {
+    http.get.withArgs('../../../assets/multiply.json').and.returnValue(throwError('Missage Data!'));
     http.get.withArgs('../../../assets/add.json').and.returnValue(of('addValue'));
     http.get.withArgs('../../../assets/numbers.json').and.returnValue(of('numberValue'));
-    http.get.withArgs('../../../assets/multiply.json').and.returnValue(throwError('Missage Data!'));
+
     service.fetchOperations().subscribe(
-      value => {
-        const finalValue = {number: 'numberValue', addOperand: 'addValue', multiplyOperand: {value: 'Missing Data!'}};
-        expect(value).toEqual(finalValue);
+      output => {
+        const expected = {
+          number: 'numberValue',
+          addOperand: 'addValue',
+          multiplyOperand: {
+            value: 'Missing Data!'
+          }
+        };
+
+        expect(output).toEqual(expected);
         done();
       }
     )

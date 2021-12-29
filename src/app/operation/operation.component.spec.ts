@@ -36,21 +36,55 @@ describe('Operation', () => {
         fixture = TestBed.createComponent(Operation);
         userService = fixture.debugElement.injector.get(GetDataService);
         snack = fixture.debugElement.injector.get(MatSnackBar);
+
         userService.fetchOperations = () => {
             return of([]);
         }
-        userService.calculate = (item) => {
+
+        userService.calculate = () => {
             return [];
         }
+
         component = fixture.componentInstance;
         fixture.detectChanges();
       });
 
-      it('should have 2 operations shown up', () => {
+      it('should open snackBar with "Server Error" on server error', () => {
+        userService.fetchOperations = () => {
+            return throwError('Server Error');
+        }
+
+        component.ngOnInit();
+        expect(snack.open).toHaveBeenCalledWith('Server Error', 'close');
+      });
+
+      it('should have 4 operations shown up', () => {
         userService.fetchOperations = () => {
             return of([
-              { action: 'add', x: 2, y: 4, result: 6 },
-              { action: 'add', x: 2, y: 5, result: 7 }
+              {
+                x: 12,
+                y: 8,
+                action: 'add',
+                result: 20
+              },
+              {
+                x: 8,
+                y: 3,
+                action: 'add',
+                result: 11
+              },
+              {
+                x: -7,
+                y: 8,
+                action: 'multiply',
+                result: -56
+              },
+              {
+                x: 0,
+                y: 100,
+                action: 'multiply',
+                result: 0
+              }
             ]);
         }
 
@@ -60,18 +94,11 @@ describe('Operation', () => {
 
         component.ngOnInit();
         fixture.detectChanges();
-        const bannerDe: DebugElement = fixture.debugElement;
-        const paragraphDe = bannerDe.queryAll(By.css('.title'));
-        expect(paragraphDe.length).toBe(2);
-      })
 
-
-      it('should open snackBar with "Server Error" on server error', () => {
-        userService.fetchOperations = () => {
-            return throwError('Server Error');
-        }
-        component.ngOnInit();
-        expect(snack.open).toHaveBeenCalledWith('Server Error', 'close');
-      })
+        const debugElement: DebugElement = fixture.debugElement;
+        const elements = debugElement.queryAll(By.css('.title'));
+        
+        expect(elements.length).toBe(4);
+      });
 
 })

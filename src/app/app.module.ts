@@ -13,14 +13,12 @@ import { Operation } from './operation/operation.component';
     Operation
   ],
   imports: [
+    Operation,
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     MatCardModule,
     MatSnackBarModule
-  ],
-  exports: [
-    Operation
   ],
   providers: [],
   bootstrap: [AppComponent],
