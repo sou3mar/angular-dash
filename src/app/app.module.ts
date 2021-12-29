@@ -13,7 +13,6 @@ import { Operation } from './operation/operation.component';
     Operation
   ],
   imports: [
-    Operation,
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
